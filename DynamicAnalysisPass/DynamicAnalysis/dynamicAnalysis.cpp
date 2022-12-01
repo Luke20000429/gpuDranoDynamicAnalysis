@@ -28,6 +28,7 @@ namespace{
 
     /* Iterate over function in file, inserting instrumentation. */
     virtual bool runOnFunction(Function &fun) override{
+      errs() << "Run on function: " << fun.getName() << "\n";
       LLVMContext& ctx = fun.getContext();
       Module* module = fun.getParent();
       StringRef moduleName = module->getName();
@@ -61,12 +62,12 @@ namespace{
           inst != instEnd;
           inst++){
         if(StoreInst* si = dyn_cast<StoreInst>(&*inst)){
-	  // errs() << "Store Address space: " << si->getPointerAddressSpace() << '\n';
+	  errs() << "Store Address space: " << si->getPointerAddressSpace() << '\n';
           storeInstruction(si, ctx, module, functionName);
 	}
         else if(LoadInst* ls = dyn_cast<LoadInst>(&*inst)){
           loadInstruction(ls, ctx, module, functionName);
-	  // errs() << "Load Address space: " << ls->getPointerAddressSpace() << '\n';
+	  errs() << "Load Address space: " << ls->getPointerAddressSpace() << '\n';
 	}
       }
 
@@ -101,7 +102,7 @@ namespace{
       Value* castedVal = builder.CreateBitCast(val, Type::getInt8PtrTy(ctx));
 
       // Insert here!
-      Constant*  myFun = insertInstrumentingFunc(mangledName, ctx, module);
+      FunctionCallee  myFun = insertInstrumentingFunc(mangledName, ctx, module);
 
       ConstantInt *line = builder.getInt32(lineNum);
       ConstantInt *column = builder.getInt32(columnNum);
@@ -115,7 +116,7 @@ namespace{
       DataLayout* dl = new DataLayout(module);
       int typeSize = (int) dl->getTypeStoreSize(baseType); 
       ConstantInt *typeSizeB = builder.getInt32(typeSize);
-      //errs() << *baseType << ' ' << typeSize << '\n';
+      errs() << *baseType << ' ' << typeSize << '\n';
 
       Value* moduleVal = builder.CreateGlobalStringPtr(moduleName);
       Value* functionVal = builder.CreateGlobalStringPtr(functionName);
@@ -123,8 +124,8 @@ namespace{
       Value* args[] = {castedVal, moduleVal, functionVal, storeVal, line, column,
                        myStaticId, typeSizeB};
       builder.CreateCall(myFun, args);
-      //errs() << "Generated: "; (builder.CreateCall(myFun, args))->print(errs());
-      //errs() << '\n';
+      errs() << "Generated: "; (builder.CreateCall(myFun, args))->print(errs());
+      errs() << '\n';
 
       return;
     }
@@ -155,7 +156,7 @@ namespace{
       Value* val = si->getPointerOperand();
       Value* castedVal = builder.CreateBitCast(val, Type::getInt8PtrTy(ctx));
 
-      Constant* myFun = insertInstrumentingFunc(mangledName, ctx, module);
+      FunctionCallee myFun = insertInstrumentingFunc(mangledName, ctx, module);
       ConstantInt *line = builder.getInt32(lineNum);
       ConstantInt *column = builder.getInt32(columnNum);
 
@@ -168,7 +169,7 @@ namespace{
       DataLayout* dl = new DataLayout(module);
       int typeSize = (int) dl->getTypeStoreSize(baseType); 
       ConstantInt *typeSizeB = builder.getInt32(typeSize);
-      //errs() << *baseType << ' ' << typeSize << '\n';
+      errs() << *baseType << ' ' << typeSize << '\n';
 
 
       Value* moduleVal = builder.CreateGlobalStringPtr(moduleName);
@@ -177,8 +178,8 @@ namespace{
       Value* args[] = {castedVal, moduleVal, functionVal, storeVal, line, column,
                        myStaticId, typeSizeB};
       builder.CreateCall(myFun, args);
-      //errs() << "Generated: "; (builder.CreateCall(myFun, args))->print(errs());
-      //errs() << '\n';
+      errs() << "Generated: "; (builder.CreateCall(myFun, args))->print(errs());
+      errs() << '\n';
 
       return;
     }
@@ -186,7 +187,7 @@ namespace{
     /**
      * Does actual function insertion at *this* location.
      */
-    Constant* insertInstrumentingFunc(StringRef mangledName, LLVMContext& ctx,
+    FunctionCallee insertInstrumentingFunc(StringRef mangledName, LLVMContext& ctx,
                                       Module* module){
       Type* returnType = Type::getVoidTy(ctx);
       vector<Type*> fArgs { Type::getInt8PtrTy(ctx), Type::getInt8PtrTy(ctx),

@@ -84,12 +84,12 @@ Now, you may add the following flags to clang++. The debugging flag `-g` is nece
 
 You may go into `./Result/gaussian` and attempt to compile `gaussian.cu`:
 ```
-clang++ -include ../../dynamicAnalysisCode.cu -g -Xclang -load -Xclang ../../DynamicAnalysisPass/build/DynamicAnalysis/libDynamicAnalysisPass.so --cuda-gpu-arch=sm_30 $(YOUR_CLANG_FLAGS) gaussian.cu -o gaussian
+clang++ -include ../../dynamicAnalysisCode.cu -g -flegacy-pass-manager -Xclang -load -Xclang ../../DynamicAnalysisPass/build/DynamicAnalysis/libDynamicAnalysisPass.so gaussian.cu -o gaussian --cuda-gpu-arch=sm_30 $(YOUR_CLANG_FLAGS) 
 ```
 
 If this suceeded, from this directory (not `./Result/gaussian`!), run and get results:
 ```
-./Result/gaussian/gaussian -s 16 | grep "DA__" | cat header.txt /dev/stdin | python3.5 computeStatistics.py /dev/stdin /dev/stdout
+./Result/gaussian/gaussian -s 16 | grep "DA__" | cat header.txt /dev/stdin | python3 computeStatistics.py /dev/stdin /dev/stdout
 ```
 
 Your output should look like:
