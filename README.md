@@ -84,7 +84,7 @@ Now, you may add the following flags to clang++. The debugging flag `-g` is nece
 
 You may go into `./Result/gaussian` and attempt to compile `gaussian.cu`:
 ```
-clang++ -include ../../dynamicAnalysisCode.cu -g -flegacy-pass-manager -Xclang -load -Xclang ../../DynamicAnalysisPass/build/DynamicAnalysis/libDynamicAnalysisPass.so gaussian.cu -o gaussian --cuda-gpu-arch=sm_30 $(YOUR_CLANG_FLAGS) 
+clang++ -include ../../dynamicAnalysisCode.cu -g -flegacy-pass-manager -Xclang -load -Xclang ../../DynamicAnalysisPass/build/DynamicAnalysis/libDynamicAnalysisPass.so gaussian.cu -o gaussian --cuda-gpu-arch=sm_61 -L /usr/local/cuda-11.8/lib64/ -lcudart_static -ldl -lrt -pthread
 ```
 
 If this suceeded, from this directory (not `./Result/gaussian`!), run and get results:
