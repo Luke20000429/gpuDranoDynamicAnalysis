@@ -51,10 +51,10 @@ namespace{
       /* Avoid inserting code recursively in our own function by skipping the file.
 	 Also, skip intrinsictly defined functions. */
       if(fileName.find("dynamicAnalysis") != StringRef::npos || functionName.startswith("__")){
-	errs() << "Skipping instrumentation into " << functionName << '\n';
+	      errs() << "Skipping instrumentation into " << functionName << '\n';
         return false;
       }else{
-	errs() << "Instrumenting: " << functionName << '\n';
+	      errs() << "Instrumenting: " << functionName << '\n';
       }
       
       /* For every function, for every basic block (bb), for every instruction... */

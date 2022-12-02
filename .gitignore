@@ -2,3 +2,5 @@
 DynamicAnalysisPass/build/
 WorkingResults/
 *.o
+.*
+build

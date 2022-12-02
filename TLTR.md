@@ -19,6 +19,14 @@ clang++ -include ../../dynamicAnalysisCode.cu -g -flegacy-pass-manager -Xclang -
 ```
 The Pass will be registered only if you keep the flag `-flegacy-pass-manager`
 
+## To see IR after code insertion
+
+```
+cd Results/gaussian/
+
+clang++ -include ../../dynamicAnalysisCode.cu -g -flegacy-pass-manager -Xclang -load -Xclang ../../DynamicAnalysisPass/build/DynamicAnalysis/libDynamicAnalysisPass.so -std=c++11 -emit-llvm -c -S gaussian.cu --cuda-gpu-arch=sm_61 -L/usr/local/cuda-11.8/lib64/
+```
+
 ## To run your program with analysis output
 ```
 cd Results/gaussian/
